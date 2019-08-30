@@ -54,11 +54,12 @@ data needs to stay, shifting it left, and appending the new data.
 inputs: iteration number
 outputs: updated image
 """
-def update_fig(n):
+def update_fig(frame, *fargs):
+    stream, pa, im = fargs
     data = get_sample(stream,pa)
     arr2D,freqs,bins = get_specgram(data,rate)
     im_data = im.get_array()
-    if n < SAMPLES_PER_FRAME:
+    if frame < SAMPLES_PER_FRAME:
         im_data = np.hstack((im_data,arr2D))
         im.set_array(im_data)
     else:
@@ -91,7 +92,8 @@ def main():
 
     ############### Animate ###############
     anim = animation.FuncAnimation(fig,update_fig,blit = False,
-                                interval=mic_read.CHUNK_SIZE/1000)
+                                   interval=mic_read.CHUNK_SIZE/1000,
+                                   fargs=(stream, pa, im))
 
                                 
     try:
